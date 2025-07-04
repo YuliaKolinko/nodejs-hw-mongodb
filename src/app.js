@@ -1,10 +1,10 @@
 import express from 'express';
-import { Contacts } from './models/contacts.js';
+import Contact from './models/contacts.js';
 
 const app = express();
 app.use(express.json());
 app.get('/contacts', async (req, res) => {
-  const contacts = await Contacts.find();
+  const contacts = await Contact.find();
   res.json({
     status: 200,
     data: contacts,
@@ -13,7 +13,7 @@ app.get('/contacts', async (req, res) => {
 });
 
 app.get('/contacts/:id', async (req, res) => {
-  const contact = await Contacts.findById(req.params.id);
+  const contact = await Contact.findById(req.params.id);
   if (contact === null) {
     return res.status(404).json({
       status: 404,
