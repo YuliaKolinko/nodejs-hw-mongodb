@@ -1,4 +1,5 @@
-import Contact from '../models/contacts';
+import Contact from '../models/contacts.js';
+import createError from 'http-errors';
 
 export const getAllContacts = async (req, res) => {
   const contacts = await Contact.find();
@@ -9,14 +10,11 @@ export const getAllContacts = async (req, res) => {
   });
 };
 
-export const getContactById = async (req, res) => {
+export const getContactById = async (req, res, next) => {
+  const { contactId } = req.params;
   const contact = await Contact.findById(req.params.id);
   if (!contact) {
-    return res.status(404).json({
-      status: 404,
-      message: 'Contact not found',
-      data: null,
-    });
+    return createError(404, 'Contact not found');
   }
   res.json({
     status: 200,
