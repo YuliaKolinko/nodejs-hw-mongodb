@@ -1,5 +1,6 @@
 import Contact from '../models/contacts.js';
 import createError from 'http-errors';
+import { createContact } from '../services/contacts.js';
 
 export const getAllContacts = async (req, res) => {
   const contacts = await Contact.find();
@@ -20,5 +21,16 @@ export const getContactById = async (req, res, next) => {
     status: 200,
     data: contact,
     message: 'Contact retrieved successfully',
+  });
+};
+
+// POST
+
+export const createContactController = async (req, res) => {
+  const newContact = await createContact(req.body);
+  res.status(201).json({
+    status: 201,
+    message: 'Successfully created a contact!',
+    data: newContact,
   });
 };
