@@ -1,6 +1,7 @@
 import Contact from '../models/contacts.js';
 import createError from 'http-errors';
 
+// POST
 export const createContact = async (payload) => {
   if (!payload) {
     throw createError(400, 'Missing request body');
@@ -15,4 +16,26 @@ export const createContact = async (payload) => {
   const contact = new Contact(payload);
   await contact.save();
   return contact;
+};
+
+// PATCH
+export const patchContactService = async (contactId, updateData) => {
+  const updatedContact = await Contact.findByIdAndUpdate(
+    contactId,
+    updateData,
+    {
+      new: true,
+    },
+  );
+
+  if (!updatedContact) {
+    throw createError(404, 'Contact not found');
+  }
+
+  return updatedContact;
+};
+
+// DELETE
+export const deleteContact = async (contactId) => {
+  return await Contact.findByIdAndDelete(contactId);
 };
