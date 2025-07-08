@@ -16,10 +16,16 @@ export const parsePaginationParams = (query) => {
   const parsedPerPage = parseNumber(perPage, 10);
   const sortBy = query.sortBy || 'name';
   const sortOrder = query.sortOrder === 'desc' ? -1 : 1;
+  const type = query.type || 'null';
+  const isFavorite = query.isFavorite;
   return {
     page: parsedPage,
     perPage: parsedPerPage,
     sortBy,
     sortOrder,
+    filters: {
+      ...(type && { contactType: type }),
+      ...(isFavorite !== undefined && { isFavorite: isFavorite === 'true' }),
+    },
   };
 };
