@@ -17,7 +17,8 @@ router.post('/', ctrlWrapper(createContactController));
 
 // PATCH
 router.patch('/:id', ctrlWrapper(patchContactController));
-export default router;
 
 // DELETE
 router.delete('/:id', ctrlWrapper(deleteContactController));
+
+export default router;
