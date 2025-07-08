@@ -28,6 +28,20 @@ export const getContacts = async (
   };
 };
 
+// GET
+export const getAllContactsService = async () => {
+  const contacts = await Contact.find();
+  return contacts;
+};
+
+// GET by ID
+export const getContactByIdService = async (contactId) => {
+  const contact = await Contact.findById(contactId);
+  if (!contact) {
+    throw createError(404, 'Contact not found');
+  }
+  return contact;
+};
 // POST
 export const createContact = async (payload) => {
   if (!payload) {
@@ -64,5 +78,6 @@ export const patchContactService = async (contactId, updateData) => {
 
 // DELETE
 export const deleteContact = async (contactId) => {
-  return await Contact.findByIdAndDelete(contactId);
+  const deletedContact = await Contact.findByIdAndDelete(contactId);
+  return deletedContact;
 };

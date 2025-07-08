@@ -24,6 +24,7 @@ router.post(
 );
 
 // PATCH
+<<<<<<< HEAD
 router.patch(
   '/:id',
   isValidId,
@@ -34,3 +35,11 @@ export default router;
 
 // DELETE
 router.delete('/:id', isValidId, ctrlWrapper(deleteContactController));
+=======
+router.patch('/:id', ctrlWrapper(patchContactController));
+
+// DELETE
+router.delete('/:id', ctrlWrapper(deleteContactController));
+
+export default router;
+>>>>>>> hw3-crud
