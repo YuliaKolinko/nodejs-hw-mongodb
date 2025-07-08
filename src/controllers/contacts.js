@@ -7,8 +7,8 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { getContacts } from '../services/contacts.js';
 
 export const getAllContacts = async (req, res) => {
-  const { page, perPage } = parsePaginationParams(req.query);
-  const contacts = await getContacts(page, perPage);
+  const { page, perPage, sortBy, sortOrder } = parsePaginationParams(req.query);
+  const contacts = await getContacts(page, perPage, sortBy, sortOrder);
   res.json({
     status: 200,
     data: contacts,

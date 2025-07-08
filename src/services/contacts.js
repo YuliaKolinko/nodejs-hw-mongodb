@@ -3,14 +3,22 @@ import createError from 'http-errors';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 // Get all contacts with pagination
-export const getContacts = async (page, perPage) => {
+export const getContacts = async (page, perPage, sortBy, sortOrder) => {
   const skip = (page - 1) * perPage;
-  const contacts = await Contact.find().skip(skip).limit(perPage);
+  const contacts = await Contact.find()
+    .skip(skip)
+    .limit(perPage)
+    .sort({ [sortBy]: sortOrder });
   const totalItems = await Contact.countDocuments();
   const paginationData = calculatePaginationData(totalItems, page, perPage);
   return {
     data: contacts,
-    ...paginationData,
+    page,
+    perPage,
+    totalItems,
+    totalPages: Math.ceil(totalItems / perPage),
+    hasPreviousPage: page > 1,
+    hasNextPage: page < Math.ceil(totalItems / perPage),
   };
 };
 

@@ -14,8 +14,12 @@ export const parsePaginationParams = (query) => {
   const { page, perPage } = query;
   const parsedPage = parseNumber(page, 1);
   const parsedPerPage = parseNumber(perPage, 10);
+  const sortBy = query.sortBy || 'name';
+  const sortOrder = query.sortOrder === 'desc' ? -1 : 1;
   return {
     page: parsedPage,
     perPage: parsedPerPage,
+    sortBy,
+    sortOrder,
   };
 };
