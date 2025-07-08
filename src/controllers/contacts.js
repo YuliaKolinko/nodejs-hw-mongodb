@@ -3,9 +3,12 @@ import createError from 'http-errors';
 import { createContact } from '../services/contacts.js';
 import { patchContactService } from '../services/contacts.js';
 import { deleteContact } from '../services/contacts.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { getContacts } from '../services/contacts.js';
 
 export const getAllContacts = async (req, res) => {
-  const contacts = await Contact.find();
+  const { page, perPage } = parsePaginationParams(req.query);
+  const contacts = await getContacts(page, perPage);
   res.json({
     status: 200,
     data: contacts,
