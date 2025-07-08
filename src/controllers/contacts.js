@@ -1,14 +1,15 @@
 import createError from 'http-errors';
-import {
-  createContact,
-  getAllContactsService,
-  getContactByIdService,
-  patchContactService,
-  deleteContact,
-} from '../services/contacts.js';
+import { createContact } from '../services/contacts.js';
+import { patchContactService } from '../services/contacts.js';
+import { deleteContact } from '../services/contacts.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { getContacts } from '../services/contacts.js';
 
 export const getAllContacts = async (req, res) => {
-  const contacts = await getAllContactsService();
+  const { page, perPage, sortBy, sortOrder, filters } = parsePaginationParams(
+    req.query,
+  );
+  const contacts = await getContacts(page, perPage, sortBy, sortOrder, filters);
   res.json({
     status: 200,
     data: contacts,

@@ -1,5 +1,32 @@
 import Contact from '../models/contacts.js';
 import createError from 'http-errors';
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
+
+// Get all contacts with pagination
+export const getContacts = async (
+  page,
+  perPage,
+  sortBy,
+  sortOrder,
+  filters,
+) => {
+  const skip = (page - 1) * perPage;
+  const totalItems = await Contact.countDocuments(filters);
+  const contacts = await Contact.find(filters)
+    .skip(skip)
+    .limit(perPage)
+    .sort({ [sortBy]: sortOrder });
+
+  return {
+    data: contacts,
+    page,
+    perPage,
+    totalItems,
+    totalPages: Math.ceil(totalItems / perPage),
+    hasPreviousPage: page > 1,
+    hasNextPage: page < Math.ceil(totalItems / perPage),
+  };
+};
 
 // GET
 export const getAllContactsService = async () => {
