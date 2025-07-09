@@ -35,8 +35,8 @@ export const getAllContactsService = async () => {
 };
 
 // GET by ID
-export const getContactByIdService = async (contactId) => {
-  const contact = await Contact.findById(contactId);
+export const getContactByIdService = async (id) => {
+  const contact = await Contact.findById(id);
   if (!contact) {
     throw createError(404, 'Contact not found');
   }
@@ -44,16 +44,6 @@ export const getContactByIdService = async (contactId) => {
 };
 // POST
 export const createContact = async (payload) => {
-  if (!payload) {
-    throw createError(400, 'Missing request body');
-  }
-  const { name, phoneNumber, contactType } = payload;
-  if (!name || !phoneNumber || !contactType) {
-    throw createError(
-      400,
-      'Missing required fields: name, phoneNumber, or contactType',
-    );
-  }
   const contact = new Contact(payload);
   await contact.save();
   return contact;
