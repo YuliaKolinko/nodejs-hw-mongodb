@@ -27,13 +27,9 @@ router.post(
 );
 
 // PATCH
-router.patch(
-  '/:id',
-  isValidId,
-  validateBody(updateContactSchema),
-  ctrlWrapper(patchContactController),
-);
-export default router;
+
+router.patch('/:id', ctrlWrapper(patchContactController));
+
 
 // DELETE
 router.delete('/:id', isValidId, ctrlWrapper(deleteContactController));
