@@ -4,6 +4,7 @@ import { patchContactService } from '../services/contacts.js';
 import { deleteContact } from '../services/contacts.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { getContacts } from '../services/contacts.js';
+import { getContactByIdService } from '../services/contacts.js';
 
 export const getAllContacts = async (req, res) => {
   const { page, perPage, sortBy, sortOrder, filters } = parsePaginationParams(
