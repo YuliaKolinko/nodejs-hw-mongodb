@@ -2,20 +2,24 @@ import createError from 'http-errors';
 import { createContact } from '../services/contacts.js';
 import { patchContactService } from '../services/contacts.js';
 import { deleteContact } from '../services/contacts.js';
-import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+
 import { getContacts } from '../services/contacts.js';
 import { getContactByIdService } from '../services/contacts.js';
 
-export const getAllContacts = async (req, res) => {
-  const { page, perPage, sortBy, sortOrder, filters } = parsePaginationParams(
-    req.query,
-  );
-  const contacts = await getContacts(page, perPage, sortBy, sortOrder, filters);
-  res.json({
-    status: 200,
-    data: contacts,
-    message: 'Contacts retrieved successfully',
-  });
+export const getAllContacts = async (req, res, next) => {
+  try {
+    console.log('➡️ GET /contacts called');
+
+    const contacts = await getAllContactsService();
+    res.json({
+      status: 200,
+      data: contacts,
+      message: 'Contacts retrieved successfully',
+    });
+  } catch (error) {
+    console.error('❌ Error in getAllContacts:', error);
+    next(error); // передати далі в errorHandler
+  }
 };
 
 export const getContactById = async (req, res) => {
