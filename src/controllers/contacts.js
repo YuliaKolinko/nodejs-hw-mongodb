@@ -1,25 +1,19 @@
 import createError from 'http-errors';
-import { createContact } from '../services/contacts.js';
-import { patchContactService } from '../services/contacts.js';
-import { deleteContact } from '../services/contacts.js';
-
-import { getContacts } from '../services/contacts.js';
-import { getContactByIdService } from '../services/contacts.js';
+import {
+  createContact,
+  patchContactService,
+  deleteContact,
+  getContactByIdService,
+  getAllContactsService,
+} from '../services/contacts.js';
 
 export const getAllContacts = async (req, res, next) => {
-  try {
-    console.log('➡️ GET /contacts called');
-
-    const contacts = await getAllContactsService();
-    res.json({
-      status: 200,
-      data: contacts,
-      message: 'Contacts retrieved successfully',
-    });
-  } catch (error) {
-    console.error('❌ Error in getAllContacts:', error);
-    next(error); // передати далі в errorHandler
-  }
+  const contacts = await getAllContactsService();
+  res.json({
+    status: 200,
+    data: contacts,
+    message: 'Contacts retrieved successfully',
+  });
 };
 
 export const getContactById = async (req, res) => {
