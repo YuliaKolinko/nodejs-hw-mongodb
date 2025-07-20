@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
-import pino from 'pino';
 import cors from 'cors';
+import pino from 'pino';
 import contactsRouter from './routers/contacts.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { initMongoConnection } from './db/initMongoConnection.js';
