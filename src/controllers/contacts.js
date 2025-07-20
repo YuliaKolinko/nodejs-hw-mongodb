@@ -7,13 +7,20 @@ import {
   deleteContact,
 } from '../services/contacts.js';
 
-export const getAllContacts = async (req, res) => {
-  const contacts = await getAllContactsService();
-  res.json({
-    status: 200,
-    data: contacts,
-    message: 'Contacts retrieved successfully',
-  });
+export const getAllContacts = async (req, res, next) => {
+  try {
+    console.log('➡️ GET /contacts called');
+
+    const contacts = await getAllContactsService();
+    res.json({
+      status: 200,
+      data: contacts,
+      message: 'Contacts retrieved successfully',
+    });
+  } catch (error) {
+    console.error('❌ Error in getAllContacts:', error);
+    next(error); // передати далі в errorHandler
+  }
 };
 
 export const getContactById = async (req, res) => {
