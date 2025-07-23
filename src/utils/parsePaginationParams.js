@@ -16,7 +16,7 @@ export const parsePaginationParams = (query) => {
   const parsedPerPage = parseNumber(perPage, 10);
   const sortBy = query.sortBy || 'name';
   const sortOrder = query.sortOrder === 'desc' ? -1 : 1;
-  const type = query.type || 'null';
+  const type = query.type;
   const isFavorite = query.isFavorite;
   return {
     page: parsedPage,
@@ -25,7 +25,7 @@ export const parsePaginationParams = (query) => {
     sortOrder,
     filters: {
       ...(type && { contactType: type }),
-      ...(isFavorite !== undefined && { isFavorite: isFavorite === 'true' }),
+      ...(isFavorite !== undefined && { isFavourite: isFavorite === 'true' }),
     },
   };
 };
