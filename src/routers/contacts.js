@@ -33,7 +33,7 @@ router.patch(
   validateBody(updateContactSchema),
   ctrlWrapper(patchContactController),
 );
-export default router;
 
 // DELETE
 router.delete('/:id', isValidId, ctrlWrapper(deleteContactController));
+export default router;
