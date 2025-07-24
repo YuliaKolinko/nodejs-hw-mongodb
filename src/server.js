@@ -6,14 +6,15 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { initMongoConnection } from './db/initMongoConnection.js';
 import { getEnvVariable } from './utils/getEnvVariable.js';
 import router from './routers/index.js';
+import cookieParser from 'cookie-parser';
 
-app.use('/api', router);
 const app = express();
 const PORT = getEnvVariable('PORT') || 3000;
 const logger = pino();
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 app.use((req, res) => {
   res.status(404).json({ status: 404, message: 'Not found' });
