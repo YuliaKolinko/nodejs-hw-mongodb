@@ -12,6 +12,18 @@ export const registerUserController = async (req, res) => {
   });
 };
 
+export const createContactController = async (req, res) => {
+  const contact = await createContact({
+    ...req.body,
+    userId: req.user._id,
+  });
+
+  res.status(201).json({
+    status: 201,
+    message: 'Contact created successfully',
+    data: contact,
+  });
+};
 export const loginUserController = async (req, res) => {
   const session = await loginUser(req.body);
   res.cookie('refreshToken', session.refreshToken, {

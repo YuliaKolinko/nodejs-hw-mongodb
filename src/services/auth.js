@@ -1,23 +1,24 @@
 import bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
-import { UsersCollection } from '../models/User.js';
+import User from '../models/User.js';
+import Session from '../models/Session.js';
 import createHttpError from 'http-errors';
 import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/contacts.js';
 
 export const registerUser = async (payload) => {
-  const user = await UsersCollection.findOne({ email: payload.email });
+  const user = await User.findOne({ email: payload.email });
   if (user) {
     throw createHttpError(409, 'Email already in use');
   }
   const hashedPassword = await bcrypt.hash(payload.password, 10);
 
-  return await UsersCollection.create({
+  return await User.create({
     ...payload,
     password: hashedPassword,
   });
 };
 export const loginUser = async (payload) => {
-  const user = await UsersCollection.findOne({ email: payload.email });
+  const user = await User.findOne({ email: payload.email });
   if (!user) {
     throw createHttpError(401, 'Invalid email or password');
   }
@@ -25,28 +26,19 @@ export const loginUser = async (payload) => {
   if (!isEqual) {
     throw createHttpError(401, 'Invalid email or password');
   }
-  await UsersCollection.deleteOne({ _id: user._id });
+  await Session.deleteMany({ userId: user._id });
 
-  const createSession = () => {
-    const accessToken = randomBytes(30).toString('base64');
-    const refreshToken = randomBytes(30).toString('base64');
-
-    return {
-      accessToken,
-      refreshToken,
-      userId: user._id,
-      accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-      refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
-    };
-  };
+  const sessionData = createSession();
+  await Session.create(sessionData);
+  return sessionData;
 };
 
 export const logoutUser = async (sessionId) => {
-  await UsersCollection.deleteOne({ _id: sessionId });
+  await Session.deleteOne({ _id: sessionId });
 };
 
 export const refreshUserSession = async ({ sessionId, refreshToken }) => {
-  const session = await UsersCollection.findOne({
+  const session = await Session.findOne({
     _id: sessionId,
     refreshToken,
   });
@@ -61,9 +53,15 @@ export const refreshUserSession = async ({ sessionId, refreshToken }) => {
     throw createHttpError(401, 'Session expired, please log in again');
   }
   const newSession = createSession();
-  await UsersCollection.deleteOne({ _id: sessionId, refreshToken });
-  return await UsersCollection.create({
+  await Session.deleteOne({ _id: sessionId, refreshToken });
+  return await Session.create({
     ...newSession,
     userId: session.userId,
   });
+};
+
+export const createContact = async (payload) => {
+  const contact = new Contact(payload);
+  await contact.save();
+  return contact;
 };

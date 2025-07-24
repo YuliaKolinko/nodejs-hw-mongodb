@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-
-const contactsSchema = new mongoose.Schema(
+const { Schema, model } = mongoose;
+const contactsSchema = new Schema(
   {
     name: {
       type: String,
@@ -26,6 +26,16 @@ const contactsSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+  },
+  {
+    parentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
+    },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
   },
 );
 

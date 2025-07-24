@@ -15,7 +15,7 @@ const logger = pino();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
-
+app.use(router);
 app.use((req, res) => {
   res.status(404).json({ status: 404, message: 'Not found' });
 });

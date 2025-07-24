@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 
-import { UsersCollection } from '../models/User.js';
-import { SessionsCollection } from '../models/Session.js';
+import User from '../models/User.js';
+import Session from '../models/Session.js';
 
 export const authenticate = async (req, res, next) => {
   const authHeader = req.get('Authorization');
@@ -16,15 +16,18 @@ export const authenticate = async (req, res, next) => {
     next(createHttpError(401, 'Invalid authorization format'));
     return;
   }
-  const session = await SessionsCollection.findOne({ accessToken: token });
+  const session = await Session.findOne({ accessToken: token });
   if (!session) {
     next(createHttpError(401, 'Invalid access token'));
     return;
   }
-  const user = await UsersCollection.findById(session.userId);
+  const user = await User.findById(session.userId);
   if (!user) {
     next(createHttpError(401, 'User not found'));
-    return;
+    if (new Date() > session.accessTokenValidUntil) {
+      next(createHttpError(401, 'Access token expired'));
+      return;
+    }
   }
   req.user = user;
   next();
