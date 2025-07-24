@@ -29,6 +29,12 @@ const contactsSchema = new mongoose.Schema(
   },
 );
 
+contactsSchema.methods.toJSON = function () {
+  const contact = this;
+  const contactObject = contact.toObject();
+  delete contactObject.password;
+  return contactObject;
+};
 const Contact = mongoose.model('Contact', contactsSchema);
 
 export default Contact;
