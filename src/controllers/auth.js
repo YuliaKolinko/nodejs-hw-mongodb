@@ -1,7 +1,10 @@
-import { registerUser } from '../services/auth.js';
 import { ONE_DAY } from '../constants/contacts.js';
-import { loginUser } from '../services/auth.js';
-import { refreshUserSession } from '../services/auth.js';
+import {
+  registerUser,
+  loginUser,
+  refreshUserSession,
+  logoutUser,
+} from '../services/auth.js';
 
 export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
