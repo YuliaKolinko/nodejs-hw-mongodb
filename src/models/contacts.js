@@ -1,14 +1,13 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
+
 const contactsSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-    },
+    email: String,
     phoneNumber: {
       type: String,
       required: true,
@@ -23,14 +22,10 @@ const contactsSchema = new Schema(
       default: 'personal',
       required: true,
     },
-  },
-  {
-    timestamps: true,
-  },
-  {
-    parentId: {
+    userId: {
       type: Schema.Types.ObjectId,
-      ref: 'users',
+      ref: 'User',
+      required: true,
     },
   },
   {
@@ -40,11 +35,10 @@ const contactsSchema = new Schema(
 );
 
 contactsSchema.methods.toJSON = function () {
-  const contact = this;
-  const contactObject = contact.toObject();
-  delete contactObject.password;
-  return contactObject;
+  const contact = this.toObject();
+  delete contact.__v;
+  return contact;
 };
-const Contact = mongoose.model('Contact', contactsSchema);
 
+const Contact = model('Contact', contactsSchema);
 export default Contact;
