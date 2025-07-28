@@ -12,7 +12,7 @@ export const getContacts = async (
   userId,
 ) => {
   const skip = (page - 1) * perPage;
-  const query = { ...filters, userId };
+  const query = filters;
   const totalItems = await Contact.countDocuments(query);
   const contacts = await Contact.find(query)
     .skip(skip)
