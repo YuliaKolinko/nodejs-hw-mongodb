@@ -7,6 +7,8 @@ import { initMongoConnection } from './db/initMongoConnection.js';
 import { getEnvVariable } from './utils/getEnvVariable.js';
 import router from './routers/index.js';
 import cookieParser from 'cookie-parser';
+import { createDirIfNotExists } from './utils/createDirIfNotExists.js';
+import { TEMP_UPLOAD_DIR, UPLOAD_DIR } from './constants/contacts.js';
 
 const app = express();
 const PORT = getEnvVariable('PORT') || 3000;
@@ -24,7 +26,6 @@ app.use(errorHandler);
 
 const start = async () => {
   try {
-    await initMongoConnection();
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);
     });
@@ -33,5 +34,14 @@ const start = async () => {
     process.exit(1);
   }
 };
+const bootstrap = async () => {
+  await initMongoConnection();
+  await createDirIfNotExists(TEMP_UPLOAD_DIR);
+  await createDirIfNotExists(UPLOAD_DIR);
+  start();
+};
 
-start();
+void bootstrap();
+
+// Images
+app.use('/uploads', express.static(UPLOAD_DIR));

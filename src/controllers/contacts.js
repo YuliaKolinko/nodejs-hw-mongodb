@@ -5,6 +5,7 @@ import { deleteContact } from '../services/contacts.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { getContacts } from '../services/contacts.js';
 import { getContactByIdService } from '../services/contacts.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 export const getAllContacts = async (req, res) => {
   const { page, perPage, sortBy, sortOrder, filters } = parsePaginationParams(
@@ -41,9 +42,14 @@ export const getContactById = async (req, res) => {
 // POST
 
 export const createContactController = async (req, res) => {
+  let photoUrl;
+  if (req.file) {
+    photoUrl = await saveFileToUploadDir(req.file);
+  }
   const newContact = await createContact({
     ...req.body,
     userId: req.user._id,
+    ...(photoUrl && { photo: photoUrl }),
   });
 
   res.status(201).json({
@@ -54,9 +60,18 @@ export const createContactController = async (req, res) => {
 };
 
 // PATCH
-export const patchContactController = async (req, res) => {
+export const patchContactController = async (req, res, next) => {
   const { id } = req.params;
-  const updatedContact = await patchContactService(id, req.body, req.user._id);
+  const photo = req.file;
+  let photoUrl;
+  if (photo) {
+    photoUrl = await saveFileToUploadDir(photo);
+  }
+  const updatedContact = await patchContactService(
+    id,
+    { ...req.body, photo: photoUrl },
+    req.user._id,
+  );
   res.json({
     status: 200,
     data: updatedContact,
@@ -73,4 +88,16 @@ export const deleteContactController = async (req, res) => {
     throw createError(404, 'Contact not found');
   }
   res.status(204).send();
+};
+
+// Images
+
+export const patchContactPhotoController = async (req, res, next) => {
+  const { id } = req.params;
+  const photo = req.file;
+  res.json({
+    status: 200,
+    data: photo,
+    message: 'Contact photo updated successfully',
+  });
 };
