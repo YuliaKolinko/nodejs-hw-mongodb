@@ -6,6 +6,9 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { getContacts } from '../services/contacts.js';
 import { getContactByIdService } from '../services/contacts.js';
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { getEnvVariable } from '../utils/getEnvVariable.js';
+import cloudinary from 'cloudinary';
 
 export const getAllContacts = async (req, res) => {
   const { page, perPage, sortBy, sortOrder, filters } = parsePaginationParams(
@@ -44,14 +47,16 @@ export const getContactById = async (req, res) => {
 export const createContactController = async (req, res) => {
   let photoUrl;
   if (req.file) {
-    photoUrl = await saveFileToUploadDir(req.file);
+    photoUrl = await saveFileToCloudinary(req.file);
   }
+
   const newContact = await createContact({
     ...req.body,
     userId: req.user._id,
     ...(photoUrl && { photo: photoUrl }),
   });
 
+  console.log('req.file:', req.file);
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
@@ -95,6 +100,23 @@ export const deleteContactController = async (req, res) => {
 export const patchContactPhotoController = async (req, res, next) => {
   const { id } = req.params;
   const photo = req.file;
+  let photoUrl;
+  if (photo) {
+    if (getEnvVariable('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+  const result = await updatedContact(id, {
+    ...req.body,
+    photo: photoUrl,
+  });
+
+  if (!result) {
+    next(createHttpError(404, 'Student not found'));
+    return;
+  }
   res.json({
     status: 200,
     data: photo,
