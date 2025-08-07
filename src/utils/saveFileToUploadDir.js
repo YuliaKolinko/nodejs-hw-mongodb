@@ -5,7 +5,7 @@ import { getEnvVariable } from './getEnvVariable.js';
 
 export const saveFileToUploadDir = async (file) => {
   await fs.rename(
-    path.join(TEMP_UPLOAD_DIR, file.filename),
+    path.join(TEMP_UPLOAD_DIR, file.path),
     path.join(UPLOAD_DIR, file.filename),
   );
   return `${getEnvVariable('APP_DOMAIN')}/uploads/${file.filename}`;
