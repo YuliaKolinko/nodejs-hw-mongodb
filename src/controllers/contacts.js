@@ -65,16 +65,24 @@ export const createContactController = async (req, res) => {
 };
 
 // PATCH
-export const patchContactController = async (req, res, next) => {
+export const patchContactController = async (req, res) => {
   const { id } = req.params;
-  const photo = req.file;
+
   let photoUrl;
-  if (photo) {
-    photoUrl = await saveFileToUploadDir(photo);
+  if (req.file) {
+    if (getEnvVariable('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(req.file);
+    } else {
+      photoUrl = await saveFileToUploadDir(req.file);
+    }
   }
+  const updateData = {
+    ...req.body,
+    ...(photoUrl && { photo: photoUrl }),
+  };
   const updatedContact = await patchContactService(
     id,
-    { ...req.body, photo: photoUrl },
+    updateData,
     req.user._id,
   );
   res.json({
@@ -97,29 +105,27 @@ export const deleteContactController = async (req, res) => {
 
 // Images
 
-export const patchContactPhotoController = async (req, res, next) => {
+export const patchContactPhotoController = async (req, res) => {
   const { id } = req.params;
-  const photo = req.file;
+  if (!req.file) {
+    throw createError(400, 'Photo file is required');
+  }
   let photoUrl;
   if (photo) {
     if (getEnvVariable('ENABLE_CLOUDINARY') === 'true') {
-      photoUrl = await saveFileToCloudinary(photo);
+      photoUrl = await saveFileToCloudinary(req.file);
     } else {
-      photoUrl = await saveFileToUploadDir(photo);
+      photoUrl = await saveFileToUploadDir(req.file);
     }
+    const updatedContact = await patchContactService(
+      id,
+      { photo: photoUrl },
+      req.user._id,
+    );
+    res.json({
+      status: 200,
+      data: updatedContact,
+      message: 'Contact photo updated successfully',
+    });
   }
-  const result = await updatedContact(id, {
-    ...req.body,
-    photo: photoUrl,
-  });
-
-  if (!result) {
-    next(createHttpError(404, 'Student not found'));
-    return;
-  }
-  res.json({
-    status: 200,
-    data: photo,
-    message: 'Contact photo updated successfully',
-  });
 };

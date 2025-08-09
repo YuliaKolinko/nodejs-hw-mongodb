@@ -30,14 +30,6 @@ router.post(
   ctrlWrapper(createContactController),
 );
 
-// PATCH
-router.patch(
-  '/:id',
-  isValidId,
-  validateBody(updateContactSchema),
-  ctrlWrapper(patchContactController),
-);
-
 // DELETE
 router.delete('/:id', isValidId, ctrlWrapper(deleteContactController));
 export default router;
@@ -53,9 +45,17 @@ router.put(
 );
 
 router.patch(
+  '/:id',
+  isValidId,
+  upload.single('photo'),
+  validateBody(updateContactSchema),
+  ctrlWrapper(patchContactController),
+);
+
+// PATCH photo only
+router.patch(
   '/:id/photo',
   isValidId,
   upload.single('photo'),
   ctrlWrapper(patchContactPhotoController),
-  validateBody(updateContactSchema),
 );

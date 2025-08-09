@@ -23,4 +23,5 @@ export const updateContactSchema = Joi.object({
   contactType: Joi.string().valid('personal', 'home', 'work'),
   email: Joi.string().email(),
   isFavourite: Joi.boolean(),
+  photo: Joi.string().uri(),
 }).min(1);
