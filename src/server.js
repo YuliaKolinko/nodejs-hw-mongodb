@@ -9,6 +9,7 @@ import router from './routers/index.js';
 import cookieParser from 'cookie-parser';
 import { createDirIfNotExists } from './utils/createDirIfNotExists.js';
 import { TEMP_UPLOAD_DIR, UPLOAD_DIR } from './constants/contacts.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 const app = express();
 const PORT = getEnvVariable('PORT') || 3000;
@@ -17,6 +18,8 @@ const logger = pino();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(UPLOAD_DIR));
+app.use('/api-docs', swaggerDocs());
 app.use(router);
 app.use((req, res) => {
   res.status(404).json({ status: 404, message: 'Not found' });
@@ -42,6 +45,3 @@ const bootstrap = async () => {
 };
 
 void bootstrap();
-
-// Images
-app.use('/uploads', express.static(UPLOAD_DIR));
