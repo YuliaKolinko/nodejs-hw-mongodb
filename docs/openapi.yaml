@@ -14,10 +14,10 @@ tags:
     description: Authentication operations.
 
 servers:
-  - url: http://localhost:3000
-    description: Local server
   - url: https://nodejs-hw-mongodb-v2a9.onrender.com
     description: Production server
+  - url: http://localhost:3000
+    description: Local server
 paths:
   /contacts:
     post:

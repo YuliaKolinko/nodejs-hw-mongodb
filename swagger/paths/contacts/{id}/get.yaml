@@ -19,6 +19,10 @@ responses:
       application/json:
         schema:
           type: object
+          required:
+            - status
+            - message
+            - data
           properties:
             status:
               type: integer
@@ -27,6 +31,7 @@ responses:
               type: string
               example: Successfully found contact!
             data:
+              type: object
               $ref: ../../../components/schemas/contacts.yaml
   '401':
     $ref: ../../../components/responses/401.yaml

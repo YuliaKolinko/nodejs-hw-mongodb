@@ -11,10 +11,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "https://nodejs-hw-mongodb-v2a9.onrender.com",
+      "description": "Production server"
     },
     {
-      "url": "http://127.0.0.1:4000"
+      "url": "http://localhost:3000",
+      "description": "Local server"
     }
   ],
   "tags": [
@@ -48,10 +50,8 @@
                 "type": "object",
                 "required": [
                   "name",
-                  "email",
                   "phoneNumber",
-                  "contactType",
-                  "isFavourite"
+                  "contactType"
                 ],
                 "properties": {
                   "name": {
@@ -129,30 +129,49 @@
         ],
         "parameters": [
           {
-            "in": "query",
             "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
             "schema": {
               "type": "integer",
-              "example": 1
-            },
-            "description": "Page number for pagination"
+              "minimum": 1,
+              "default": 1,
+              "description": "Page number for pagination"
+            }
           },
           {
+            "name": "perPage",
             "in": "query",
-            "name": "limit",
+            "description": "Number of items per page",
             "schema": {
               "type": "integer",
-              "example": 10
-            },
-            "description": "Number of contacts per page"
+              "minimum": 1,
+              "default": 10,
+              "description": "Number of contacts per page"
+            }
           },
           {
+            "name": "sortBy",
             "in": "query",
-            "name": "favourite",
             "schema": {
-              "type": "boolean"
+              "type": "string",
+              "default": "_id"
             },
-            "description": "Filter by favourite status"
+            "description": "Field name to sort by"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            },
+            "description": "Sort order"
           }
         ],
         "responses": {
@@ -172,9 +191,38 @@
                       "example": "Successfully retrieved contacts list!"
                     },
                     "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/contacts"
+                      "type": "object",
+                      "properties": {
+                        "contacts": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/contacts"
+                          }
+                        },
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "perPage": {
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "totalItems": {
+                          "type": "integer",
+                          "example": 50
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "example": true
+                        }
                       }
                     }
                   }
@@ -219,6 +267,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -229,6 +282,7 @@
                       "example": "Successfully found contact!"
                     },
                     "data": {
+                      "type": "object",
                       "$ref": "#/components/schemas/contacts"
                     }
                   }
@@ -361,25 +415,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Contact deleted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully deleted contact!"
-                    }
-                  }
-                }
-              }
-            }
+          "204": {
+            "description": "Contact deleted successfully. No content returned."
           },
           "401": {
             "$ref": "#/components/responses/401"
