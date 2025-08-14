@@ -14,30 +14,40 @@ parameters:
       type: integer
       minimum: 1
       default: 1
-      description: Page number for pagination
+      example: 1
   - name: perPage
     in: query
     description: Number of items per page
+    required: false
     schema:
       type: integer
       minimum: 1
       default: 10
-      description: Number of contacts per page
+      example: 10
   - name: sortBy
     in: query
+    description: Field name to sort by
+    required: false
     schema:
       type: string
-      default: '_id'
-    description: Field name to sort by
+      default: _id
+      example: name
   - name: sortOrder
     in: query
+    description: Sort order
+    required: false
     schema:
       type: string
-      enum:
-        - asc
-        - desc
+      enum: [asc, desc]
       default: asc
-    description: Sort order
+      example: asc
+  - name: filters
+    in: query
+    description: JSON string with filters
+    required: false
+    schema:
+      type: string
+      example: '{"isFavourite": true}'
 responses:
   '200':
     description: Successfully retrieved contacts
@@ -67,10 +77,10 @@ responses:
                   example: 10
                 totalItems:
                   type: integer
-                  example: 50
+                  example: 35
                 totalPages:
                   type: integer
-                  example: 5
+                  example: 4
                 hasPreviousPage:
                   type: boolean
                   example: false
@@ -79,3 +89,5 @@ responses:
                   example: true
   '401':
     $ref: ../../components/responses/401.yaml
+  '404':
+    description: Contacts not found

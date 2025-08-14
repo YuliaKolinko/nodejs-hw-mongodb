@@ -18,13 +18,8 @@ export const getAllContacts = async (req, res) => {
     ...filters,
     userId: req.user._id,
   };
-  const contacts = await getContacts(
-    page,
-    perPage,
-    sortBy,
-    sortOrder,
-    filtersWithUser,
-  );
+  const { contacts, totalItems, totalPages, hasPreviousPage, hasNextPage } =
+    await getContacts(page, perPage, sortBy, sortOrder, filtersWithUser);
   res.json({
     status: 200,
     data: contacts,
