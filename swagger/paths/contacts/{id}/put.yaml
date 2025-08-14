@@ -1,8 +1,8 @@
 tags:
   - Contacts
-summary: Update contact
-operationId: updateContact
-description: Update contact information by id
+summary: Replace contact by id
+operationId: replaceContact
+description: Replace entire contact data by its ID. Creates if contact does not exist.
 security:
   - bearerAuth: []
 parameters:
@@ -11,8 +11,9 @@ parameters:
     required: true
     schema:
       type: string
-      example: 65ca67e7ae7f10c88b598384
+      example: '6887f0df4c65801d86638065'
 requestBody:
+  required: true
   content:
     multipart/form-data:
       schema:
@@ -22,15 +23,13 @@ requestBody:
             type: string
             minLength: 3
             maxLength: 20
-            example: John Doe
-          email:
-            type: string
-            example: john.doe@example.com
           phoneNumber:
             type: string
-            example: +1234567890
             minLength: 3
             maxLength: 20
+          email:
+            type: string
+            format: email
           contactType:
             type: string
             enum:
@@ -39,13 +38,17 @@ requestBody:
               - personal
           isFavourite:
             type: boolean
-            example: true
           photo:
             type: string
             format: binary
+        required:
+          - name
+          - phoneNumber
+          - email
+          - contactType
 responses:
   '200':
-    description: Contact updated
+    description: Successfully replaced contact
     content:
       application/json:
         schema:
@@ -60,10 +63,12 @@ responses:
               example: 200
             message:
               type: string
-              example: Successfully updated contact!
+              example: Successfully replaced contact with id 6887f0df4c65801d86638065!
             data:
-              $ref: ../../../components/schemas/contacts.yaml
+              $ref: '../../../components/schemas/contacts.yaml'
+  '400':
+    $ref: '../../../components/responses/400.yaml'
   '401':
-    $ref: ../../../components/responses/401.yaml
+    $ref: '../../../components/responses/401.yaml'
   '404':
-    description: Contact not found
+    $ref: '../../../components/responses/404.yaml'
